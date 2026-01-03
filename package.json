@@ -1,7 +1,7 @@
 {
   "name": "miband-watchface-toolkit",
   "private": true,
-  "version": "26w01a",
+  "version": "0",
   "type": "module",
   "scripts": {
     "dev": "vite",

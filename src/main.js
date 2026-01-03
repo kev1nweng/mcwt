@@ -1,9 +1,8 @@
 import { CharacterSpritePlugin } from "./plugins/character-sprite/index.js";
-import pkg from "../package.json";
 
 class ToolkitApp {
   constructor() {
-    this.version = pkg.version;
+    this.version = __APP_VERSION__;
     this.plugins = [new CharacterSpritePlugin()];
     this.activePlugin = null;
     this.init();
