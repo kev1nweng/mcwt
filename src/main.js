@@ -5,7 +5,17 @@ class ToolkitApp {
     this.version = __APP_VERSION__;
     this.plugins = [new CharacterSpritePlugin()];
     this.activePlugin = null;
+    this.navButtons = [];
     this.init();
+  }
+
+  getNavButtonClass(isActive) {
+    const base =
+      "inline-flex items-center select-none rounded-md px-3 py-1.5 text-sm font-medium transition-colors";
+    const inactive =
+      "text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--muted))] hover:text-[hsl(var(--foreground))]";
+    const active = "bg-[hsl(var(--foreground))] text-[hsl(var(--background))]";
+    return `${base} ${isActive ? active : inactive}`;
   }
 
   init() {
@@ -16,11 +26,14 @@ class ToolkitApp {
 
     const nav = document.getElementById("plugin-nav");
     this.plugins.forEach((plugin) => {
-      const btn = document.createElement("div");
-      btn.className = "nav-item";
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = this.getNavButtonClass(false);
       btn.textContent = plugin.name;
-      btn.onclick = () => this.loadPlugin(plugin);
+      btn.dataset.pluginName = plugin.name;
+      btn.addEventListener("click", () => this.loadPlugin(plugin));
       nav.appendChild(btn);
+      this.navButtons.push(btn);
     });
 
     // Load first plugin by default
@@ -43,15 +56,16 @@ class ToolkitApp {
     this.activePlugin = plugin;
 
     // Update UI
-    document.querySelectorAll(".nav-item").forEach((item) => {
-      item.classList.toggle("active", item.textContent === plugin.name);
+    this.navButtons.forEach((btn) => {
+      const isActive = btn.dataset.pluginName === plugin.name;
+      btn.className = this.getNavButtonClass(isActive);
     });
 
     const content = document.getElementById("plugin-content");
     content.innerHTML = "";
     plugin.render(content);
     // Handle auto-hiding scrollbar on scroll
-    const container = document.querySelector(".tui-container");
+    const container = document.querySelector(".scroll-container");
     let scrollTimeout;
     container.onscroll = () => {
       container.classList.add("is-scrolling");
