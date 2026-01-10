@@ -1,5 +1,11 @@
 @import "tailwindcss";
 
+@property --scrollbar-thumb {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: transparent;
+}
+
 /*
   shadcn-inspired design tokens (no React required).
   We keep existing `tui-*` hooks so current plugins keep working,
@@ -8,16 +14,17 @@
 
 @layer base {
   :root {
-    /* shadcn-like HSL tokens */
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    color-scheme: light;
+    /* Elevated hierarchy: BG is slightly darker, Cards are white */
+    --background: 210 20% 98%;
+    --foreground: 224 71.4% 4.1%;
+    --muted: 220 14.3% 95.9%;
+    --muted-foreground: 220 8.9% 46.1%;
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --card-foreground: 224 71.4% 4.1%;
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 224 71.4% 4.1%;
 
     --radius: 0.75rem;
 
@@ -34,6 +41,22 @@
     --secondary-text: hsl(var(--muted-foreground));
     --border-color: hsl(var(--border));
     --hover-bg: hsl(var(--muted));
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      color-scheme: dark;
+      /* Deep background, lifted cards */
+      --background: 240 10% 3.9%;
+      --foreground: 0 0% 98%;
+      --muted: 240 4.8% 15.9%;
+      --muted-foreground: 240 5% 64.9%;
+      --card: 240 10% 6%;
+      --card-foreground: 0 0% 98%;
+      --border: 240 4.8% 18%;
+      --input: 240 4.8% 18%;
+      --ring: 240 4.9% 83.9%;
+    }
   }
 
   * {
@@ -55,6 +78,7 @@
     flex-direction: column;
     min-height: 100vh;
     overflow: hidden; /* keep app layout stable; container scrolls */
+    transition: background-color 0.3s ease, color 0.3s ease;
   }
 
   ::selection {
@@ -65,12 +89,14 @@
 @layer components {
   /* Scroll container with auto-hiding scrollbar (mimics previous tui-container behavior) */
   .scroll-container {
+    --scrollbar-thumb: transparent;
     scrollbar-width: thin;
-    scrollbar-color: transparent transparent;
+    scrollbar-color: var(--scrollbar-thumb) transparent;
+    transition: --scrollbar-thumb 0.3s;
   }
 
   .scroll-container.is-scrolling {
-    scrollbar-color: hsl(var(--border)) transparent;
+    --scrollbar-thumb: hsl(var(--border));
   }
 
   .scroll-container::-webkit-scrollbar {
@@ -82,12 +108,8 @@
   }
 
   .scroll-container::-webkit-scrollbar-thumb {
-    background: transparent;
+    background: var(--scrollbar-thumb);
     border-radius: 999px;
-  }
-
-  .scroll-container.is-scrolling::-webkit-scrollbar-thumb {
-    background: hsl(var(--border));
   }
 
   /* Range slider thumb styling (Tailwind doesn't style range thumbs by default) */
@@ -123,8 +145,18 @@
 @layer base {
   canvas {
     image-rendering: pixelated;
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
-    background-image: conic-gradient(#999 25%, #bbb 0 50%, #999 0 75%, #bbb 0);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    /* Neutral checkerboard to ensure visibility of both light and dark content */
+    background-image: conic-gradient(#9ca3af 25%, #d1d5db 0 50%, #9ca3af 0 75%, #d1d5db 0);
     background-size: 16px 16px;
+    border: 1px solid hsl(var(--border));
+    border-radius: 4px;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    canvas {
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+      border-color: hsl(var(--border) / 0.5);
+    }
   }
 }

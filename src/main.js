@@ -1,9 +1,10 @@
 import { CharacterSpritePlugin } from "./plugins/character-sprite/index.js";
+import { ProgressTexturePlugin } from "./plugins/progress-texture/index.js";
 
 class ToolkitApp {
   constructor() {
     this.version = __APP_VERSION__;
-    this.plugins = [new CharacterSpritePlugin()];
+    this.plugins = [new CharacterSpritePlugin(), new ProgressTexturePlugin()];
     this.activePlugin = null;
     this.navButtons = [];
     this.init();
@@ -41,6 +42,17 @@ class ToolkitApp {
       this.loadPlugin(this.plugins[0]);
     }
 
+    // Handle auto-hiding scrollbar on scroll
+    const container = document.querySelector(".scroll-container");
+    let scrollTimeout;
+    container.addEventListener("scroll", () => {
+      container.classList.add("is-scrolling");
+      clearTimeout(scrollTimeout);
+      scrollTimeout = setTimeout(() => {
+        container.classList.remove("is-scrolling");
+      }, 1000);
+    });
+
     window.addEventListener("keydown", (e) => {
       if (e.key === "Escape") {
         // Could implement a menu view here
@@ -64,16 +76,6 @@ class ToolkitApp {
     const content = document.getElementById("plugin-content");
     content.innerHTML = "";
     plugin.render(content);
-    // Handle auto-hiding scrollbar on scroll
-    const container = document.querySelector(".scroll-container");
-    let scrollTimeout;
-    container.onscroll = () => {
-      container.classList.add("is-scrolling");
-      clearTimeout(scrollTimeout);
-      scrollTimeout = setTimeout(() => {
-        container.classList.remove("is-scrolling");
-      }, 1000);
-    };
   }
 }
 
