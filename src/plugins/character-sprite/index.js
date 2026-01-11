@@ -8,7 +8,8 @@ export class CharacterSpritePlugin {
     this.t = t;
     this.name = t("name");
     this.config = {
-      fontFamily: "Inter",
+      fontFamily:
+        "https://fonts.googleapis.com/css2?family=Google+Sans+Flex:opsz,wght@6..144,1..1000&display=swap",
       fontSize: 48,
       color: "#ffffff",
       width: 40,
@@ -20,6 +21,7 @@ export class CharacterSpritePlugin {
       italic: false,
       underline: false,
       outlineOnly: false,
+      outlineThickness: 1.2,
       features: {
         tnum: true,
         lnum: false,
@@ -145,7 +147,7 @@ export class CharacterSpritePlugin {
           </div>
           <div class="${groupClass}">
             <label class="${labelClass}">${this.t("font_style")}</label>
-            <div class="${checkboxWrapClass}">
+            <div class="${checkboxWrapClass} items-center">
               <label class="${checkboxItemClass}">
                 <input class="accent-[hsl(var(--foreground))]" type="checkbox" id="style-bold" data-autogen="change" ${
                               this.config.bold ? "checked" : ""
@@ -166,8 +168,14 @@ export class CharacterSpritePlugin {
                               this.config.outlineOnly ? "checked" : ""
                             }> <b>O</b> ${this.t("outline_only")}
                         </label>
-                    </div>
-                </div>
+
+              <div id="outline-thickness-group" class="flex flex-1 items-center gap-2.5 min-w-[140px] ${this.config.outlineOnly ? "" : "hidden"}">
+                <span class="whitespace-nowrap text-[10px] font-medium text-[hsl(var(--muted-foreground))] uppercase tracking-wider">${this.t("outline_thickness")}</span>
+                <input type="range" id="outline-thickness" class="variation-slider flex-1" min="0.1" max="10" step="0.1" value="${this.config.outlineThickness}" data-autogen="input">
+                <span id="outline-thickness-value" class="w-7 font-mono text-[10px] text-[hsl(var(--muted-foreground))] text-right">${this.config.outlineThickness}</span>
+              </div>
+            </div>
+          </div>
           <div class="${groupClass}">
             <label class="${labelClass}">${this.t("font_features")}</label>
             <div class="${checkboxWrapClass}">
@@ -232,6 +240,24 @@ export class CharacterSpritePlugin {
     variableFontToggle.addEventListener("change", (e) => {
       this.config.enableVariableFont = e.target.checked;
       this.updateVariableControls();
+    });
+
+    // Outline thickness toggle & value update
+    const outlineToggle = container.querySelector("#style-outline");
+    const thicknessGroup = container.querySelector("#outline-thickness-group");
+    const thicknessInput = container.querySelector("#outline-thickness");
+    const thicknessValue = container.querySelector("#outline-thickness-value");
+
+    outlineToggle.addEventListener("change", (e) => {
+      if (e.target.checked) {
+        thicknessGroup.classList.remove("hidden");
+      } else {
+        thicknessGroup.classList.add("hidden");
+      }
+    });
+
+    thicknessInput.addEventListener("input", (e) => {
+      thicknessValue.textContent = e.target.value;
     });
 
     this.previewContainer = container.querySelector("#preview-container");
@@ -428,6 +454,9 @@ export class CharacterSpritePlugin {
     this.config.italic = document.getElementById("style-italic").checked;
     this.config.underline = document.getElementById("style-underline").checked;
     this.config.outlineOnly = document.getElementById("style-outline").checked;
+    this.config.outlineThickness = parseFloat(
+      document.getElementById("outline-thickness").value
+    );
 
     // Font Features
     const features = [];
@@ -548,24 +577,33 @@ export class CharacterSpritePlugin {
       const fontWeight = this.config.bold ? "bold" : "normal";
       const fontStyle = this.config.italic ? "italic" : "normal";
       const textDecoration = this.config.underline ? "underline" : "none";
-      const fill = this.config.outlineOnly ? "none" : this.config.color;
-      const stroke = this.config.outlineOnly ? this.config.color : "none";
-      const strokeWidth = this.config.outlineOnly ? "2" : "0"; // Using 2px for better visibility of outline
 
       // Build font-variation-settings from detected axes
-      let fontVariationSettings = 'normal';
+      let fontVariationSettings = "normal";
       if (Object.keys(this.config.variationSettings).length > 0) {
         fontVariationSettings = Object.entries(this.config.variationSettings)
           .map(([tag, value]) => `"${tag}" ${value}`)
-          .join(', ');
+          .join(", ");
       }
+
+      // Use SVG filter for outline to avoid internal lines from overlapping font paths
+      const outlineFilter = this.config.outlineOnly
+        ? `
+        <defs>
+          <filter id="outline">
+            <feMorphology operator="dilate" radius="${this.config.outlineThickness}" in="SourceAlpha" result="dilated"/>
+            <feComposite operator="out" in="dilated" in2="SourceAlpha" result="outline"/>
+            <feFlood flood-color="${this.config.color}" result="color"/>
+            <feComposite operator="in" in="color" in2="outline"/>
+          </filter>
+        </defs>`
+        : "";
 
       // Use SVG to render text to ensure font features (tnum, etc.) are respected
       // Canvas 2D API has inconsistent support for font-feature-settings across browsers
       const svg = `
-                <svg xmlns="http://www.w3.org/2000/svg" width="${
-                  this.config.width
-                }" height="${this.config.height}">
+                <svg xmlns="http://www.w3.org/2000/svg" width="${this.config.width}" height="${this.config.height}">
+                    ${outlineFilter}
                     <text 
                         x="${this.config.width / 2 + hOffset}" 
                         y="${commonY}" 
@@ -574,11 +612,10 @@ export class CharacterSpritePlugin {
                         font-weight="${fontWeight}"
                         font-style="${fontStyle}"
                         text-decoration="${textDecoration}"
-                        fill="${fill}" 
-                        stroke="${stroke}"
-                        stroke-width="${strokeWidth}"
+                        fill="${this.config.color}" 
                         text-anchor="middle" 
                         dominant-baseline="alphabetic"
+                        ${this.config.outlineOnly ? 'filter="url(#outline)"' : ""}
                         style='font-feature-settings: ${featureSettings}; font-variant-numeric: ${variantNumeric}; font-variation-settings: ${fontVariationSettings};'
                     >${this.escapeXml(item)}</text>
                 </svg>
