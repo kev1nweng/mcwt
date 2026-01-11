@@ -129,10 +129,16 @@ export class CharacterSpritePlugin {
                         }">
                     </div>
                 </div>
-          <div class="${groupClass}">
-            <label class="${labelClass}">垂直偏移 (px, 可选)</label>
-            <input type="number" id="v-offset" class="${inputClass}" data-autogen="input" value="0">
-                </div>
+          <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
+            <div class="${groupClass}">
+              <label class="${labelClass}">水平偏移 (px, 可选)</label>
+              <input type="number" id="h-offset" class="${inputClass}" data-autogen="input" value="0">
+            </div>
+            <div class="${groupClass}">
+              <label class="${labelClass}">垂直偏移 (px, 可选)</label>
+              <input type="number" id="v-offset" class="${inputClass}" data-autogen="input" value="0">
+            </div>
+          </div>
           <div class="${groupClass}">
             <label class="${labelClass}">字体样式</label>
             <div class="${checkboxWrapClass}">
@@ -410,6 +416,7 @@ export class CharacterSpritePlugin {
     this.config.width = parseInt(document.getElementById("char-width").value);
     this.config.height = parseInt(document.getElementById("char-height").value);
     this.config.color = document.getElementById("text-color").value;
+    const hOffset = parseInt(document.getElementById("h-offset").value) || 0;
     const vOffset = parseInt(document.getElementById("v-offset").value) || 0;
 
     this.config.bold = document.getElementById("style-bold").checked;
@@ -553,7 +560,7 @@ export class CharacterSpritePlugin {
                   this.config.width
                 }" height="${this.config.height}">
                     <text 
-                        x="${this.config.width / 2}" 
+                        x="${this.config.width / 2 + hOffset}" 
                         y="${commonY}" 
                         font-family="${this.escapeXml(this.config.fontFamily)}" 
                         font-size="${this.config.fontSize}px" 

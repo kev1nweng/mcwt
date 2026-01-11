@@ -17,7 +17,12 @@ export class ProgressTexturePlugin {
       color: "#ff0000",
       bgColor: "rgba(255, 255, 255, 0.1)",
       fillType: "solid", // solid, gradient
-      gradientColor: "#00ff00",
+      gradientType: "linear", // linear, radial
+      gradientAngle: 270,
+      gradientStops: [
+        { offset: 0, color: "#ff0000" },
+        { offset: 1, color: "#00ff00" },
+      ],
       lineCap: "round", // round, butt, square
       startX: 10,
       startY: 50,
@@ -40,7 +45,8 @@ export class ProgressTexturePlugin {
 
   render(container) {
     const inputClass =
-      "w-full rounded-md border border-[hsl(var(--input))] bg-[hsl(var(--background))] px-3 py-2 text-sm text-[hsl(var(--foreground))] outline-none transition focus:border-[hsl(var(--ring))] focus:ring-4 focus:ring-[hsl(var(--ring)/0.18)]";
+      "w-full rounded-md border border-[hsl(var(--input))] bg-[hsl(var(--background))] pl-3 pr-3 py-2 text-sm text-[hsl(var(--foreground))] outline-none transition focus:border-[hsl(var(--ring))] focus:ring-4 focus:ring-[hsl(var(--ring)/0.18)]";
+    const selectClass = `${inputClass} pr-10 appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20fill%3D%22none%22%20viewBox%3D%220%200%2024%2024%22%20stroke%3D%22rgba(150,150,150,0.8)%22%20stroke-width%3D%222%22%3E%3Cpath%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20d%3D%22m19%209-7%207-7-7%22%2F%3E%3C%2Fsvg%3E')] bg-[position:right_0.75rem_center] bg-[size:1rem_1rem] bg-no-repeat`;
     const labelClass = "mb-2 block text-sm font-medium";
     const groupClass = "mb-5";
     const panelClass =
@@ -59,155 +65,272 @@ export class ProgressTexturePlugin {
           <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
             <div class="${groupClass}">
               <label class="${labelClass}">样式</label>
-              <select id="style" class="${inputClass}" data-autogen="change">
-                <option value="arc" ${this.config.style === "arc" ? "selected" : ""}>圆环/圆弧</option>
-                <option value="circle" ${this.config.style === "circle" ? "selected" : ""}>实心圆</option>
-                <option value="line" ${this.config.style === "line" ? "selected" : ""}>线条</option>
+              <select id="style" class="${selectClass}" data-autogen="change">
+                <option value="arc" ${
+                  this.config.style === "arc" ? "selected" : ""
+                }>圆环/圆弧</option>
+                <option value="circle" ${
+                  this.config.style === "circle" ? "selected" : ""
+                }>实心圆</option>
+                <option value="line" ${
+                  this.config.style === "line" ? "selected" : ""
+                }>线条</option>
               </select>
             </div>
             <div class="${groupClass}">
               <label class="${labelClass}">总步数 (序列长度)</label>
-              <input type="number" id="steps" class="${inputClass}" data-autogen="input" value="${this.config.steps}">
+              <input type="number" id="steps" class="${inputClass}" data-autogen="input" value="${
+      this.config.steps
+    }">
             </div>
           </div>
 
           <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
             <div class="${groupClass}">
               <label class="${labelClass}">画布宽度</label>
-              <input type="number" id="width" class="${inputClass}" data-autogen="input" value="${this.config.width}">
+              <input type="number" id="width" class="${inputClass}" data-autogen="input" value="${
+      this.config.width
+    }">
             </div>
             <div class="${groupClass}">
               <label class="${labelClass}">画布高度</label>
-              <input type="number" id="height" class="${inputClass}" data-autogen="input" value="${this.config.height}">
+              <input type="number" id="height" class="${inputClass}" data-autogen="input" value="${
+      this.config.height
+    }">
             </div>
           </div>
 
-          <div id="arc-params" class="${this.config.style === "arc" ? "" : "hidden"}">
+          <div id="arc-params" class="${
+            this.config.style === "arc" ? "" : "hidden"
+          }">
             <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
               <div class="${groupClass}">
                 <label class="${labelClass}">圆心 X</label>
-                <input type="number" id="centerX" class="${inputClass}" data-autogen="input" value="${this.config.centerX}">
+                <input type="number" id="centerX" class="${inputClass}" data-autogen="input" value="${
+      this.config.centerX
+    }">
               </div>
               <div class="${groupClass}">
                 <label class="${labelClass}">圆心 Y</label>
-                <input type="number" id="centerY" class="${inputClass}" data-autogen="input" value="${this.config.centerY}">
+                <input type="number" id="centerY" class="${inputClass}" data-autogen="input" value="${
+      this.config.centerY
+    }">
               </div>
             </div>
             <div class="grid grid-cols-1 gap-5 sm:grid-cols-3">
               <div class="${groupClass}">
                 <label class="${labelClass}">半径</label>
-                <input type="number" id="radius" class="${inputClass}" data-autogen="input" value="${this.config.radius}">
+                <input type="number" id="radius" class="${inputClass}" data-autogen="input" value="${
+      this.config.radius
+    }">
               </div>
               <div class="${groupClass}">
                 <label class="${labelClass}">粗细</label>
-                <input type="number" id="thickness" class="${inputClass}" data-autogen="input" value="${this.config.thickness}">
+                <input type="number" id="thickness" class="${inputClass}" data-autogen="input" value="${
+      this.config.thickness
+    }">
               </div>
               <div class="${groupClass}">
                 <label class="${labelClass}">线头样式</label>
-                <select id="lineCap" class="${inputClass}" data-autogen="change">
-                  <option value="round" ${this.config.lineCap === "round" ? "selected" : ""}>圆头</option>
-                  <option value="butt" ${this.config.lineCap === "butt" ? "selected" : ""}>平头</option>
-                  <option value="square" ${this.config.lineCap === "square" ? "selected" : ""}>方头</option>
+                <select id="lineCap" class="${selectClass}" data-autogen="change">
+                  <option value="round" ${
+                    this.config.lineCap === "round" ? "selected" : ""
+                  }>圆头</option>
+                  <option value="butt" ${
+                    this.config.lineCap === "butt" ? "selected" : ""
+                  }>平头</option>
+                  <option value="square" ${
+                    this.config.lineCap === "square" ? "selected" : ""
+                  }>方头</option>
                 </select>
               </div>
             </div>
             <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
               <div class="${groupClass}">
                 <label class="${labelClass}">起始角度 (度)</label>
-                <input type="number" id="startAngle" class="${inputClass}" data-autogen="input" value="${this.config.startAngle}">
+                <input type="number" id="startAngle" class="${inputClass}" data-autogen="input" value="${
+      this.config.startAngle
+    }">
               </div>
               <div class="${groupClass}">
                 <label class="${labelClass}">结束角度 (度)</label>
-                <input type="number" id="endAngle" class="${inputClass}" data-autogen="input" value="${this.config.endAngle}">
+                <input type="number" id="endAngle" class="${inputClass}" data-autogen="input" value="${
+      this.config.endAngle
+    }">
               </div>
             </div>
           </div>
 
-          <div id="circle-params" class="${this.config.style === "circle" ? "" : "hidden"}">
+          <div id="circle-params" class="${
+            this.config.style === "circle" ? "" : "hidden"
+          }">
              <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
               <div class="${groupClass}">
                 <label class="${labelClass}">中心 X</label>
-                <input type="number" id="centerX-circle" class="${inputClass}" data-autogen="input" value="${this.config.centerX}">
+                <input type="number" id="centerX-circle" class="${inputClass}" data-autogen="input" value="${
+      this.config.centerX
+    }">
               </div>
               <div class="${groupClass}">
                 <label class="${labelClass}">中心 Y</label>
-                <input type="number" id="centerY-circle" class="${inputClass}" data-autogen="input" value="${this.config.centerY}">
+                <input type="number" id="centerY-circle" class="${inputClass}" data-autogen="input" value="${
+      this.config.centerY
+    }">
               </div>
             </div>
              <div class="${groupClass}">
                 <label class="${labelClass}">最大半径</label>
-                <input type="number" id="radius-circle" class="${inputClass}" data-autogen="input" value="${this.config.radius}">
+                <input type="number" id="radius-circle" class="${inputClass}" data-autogen="input" value="${
+      this.config.radius
+    }">
               </div>
           </div>
 
-          <div id="line-params" class="${this.config.style === "line" ? "" : "hidden"}">
+          <div id="line-params" class="${
+            this.config.style === "line" ? "" : "hidden"
+          }">
             <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
                <div class="${groupClass}">
                 <label class="${labelClass}">起点 X</label>
-                <input type="number" id="startX-line" class="${inputClass}" data-autogen="input" value="${this.config.startX}">
+                <input type="number" id="startX-line" class="${inputClass}" data-autogen="input" value="${
+      this.config.startX
+    }">
               </div>
               <div class="${groupClass}">
                 <label class="${labelClass}">起点 Y</label>
-                <input type="number" id="startY-line" class="${inputClass}" data-autogen="input" value="${this.config.startY}">
+                <input type="number" id="startY-line" class="${inputClass}" data-autogen="input" value="${
+      this.config.startY
+    }">
               </div>
             </div>
             <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
                <div class="${groupClass}">
                 <label class="${labelClass}">终点 X</label>
-                <input type="number" id="endX-line" class="${inputClass}" data-autogen="input" value="${this.config.endX}">
+                <input type="number" id="endX-line" class="${inputClass}" data-autogen="input" value="${
+      this.config.endX
+    }">
               </div>
               <div class="${groupClass}">
                 <label class="${labelClass}">终点 Y</label>
-                <input type="number" id="endY-line" class="${inputClass}" data-autogen="input" value="${this.config.endY}">
+                <input type="number" id="endY-line" class="${inputClass}" data-autogen="input" value="${
+      this.config.endY
+    }">
               </div>
             </div>
             <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
               <div class="${groupClass}">
                 <label class="${labelClass}">线宽</label>
-                <input type="number" id="thickness-line" class="${inputClass}" data-autogen="input" value="${this.config.thickness}">
+                <input type="number" id="thickness-line" class="${inputClass}" data-autogen="input" value="${
+      this.config.thickness
+    }">
               </div>
               <div class="${groupClass}">
                 <label class="${labelClass}">线头样式</label>
-                <select id="lineCap-line" class="${inputClass}" data-autogen="change">
-                  <option value="round" ${this.config.lineCap === "round" ? "selected" : ""}>圆头</option>
-                  <option value="butt" ${this.config.lineCap === "butt" ? "selected" : ""}>平头</option>
-                  <option value="square" ${this.config.lineCap === "square" ? "selected" : ""}>方头</option>
+                <select id="lineCap-line" class="${selectClass}" data-autogen="change">
+                  <option value="round" ${
+                    this.config.lineCap === "round" ? "selected" : ""
+                  }>圆头</option>
+                  <option value="butt" ${
+                    this.config.lineCap === "butt" ? "selected" : ""
+                  }>平头</option>
+                  <option value="square" ${
+                    this.config.lineCap === "square" ? "selected" : ""
+                  }>方头</option>
                 </select>
               </div>
             </div>
           </div>
 
-          <div class="grid grid-cols-1 gap-5 sm:grid-cols-3">
+          <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
             <div class="${groupClass}">
-              <label class="${labelClass}">颜色</label>
-              <input type="color" id="color" class="${inputClass} h-10 p-1" data-autogen="input" value="${this.config.color}">
-            </div>
-            <div class="${groupClass}">
-              <label class="${labelClass}">填充类型</label>
-              <select id="fillType" class="${inputClass}" data-autogen="change">
-                <option value="solid" ${this.config.fillType === "solid" ? "selected" : ""}>实色</option>
-                <option value="gradient" ${this.config.fillType === "gradient" ? "selected" : ""}>渐变</option>
+              <label class="${labelClass}">颜色模式</label>
+              <select id="fillType" class="${selectClass}" data-autogen="change">
+                <option value="solid" ${
+                  this.config.fillType === "solid" ? "selected" : ""
+                }>纯色</option>
+                <option value="gradient" ${
+                  this.config.fillType === "gradient" ? "selected" : ""
+                }>渐变</option>
               </select>
             </div>
-            <div id="gradient-color-wrap" class="${groupClass} ${this.config.fillType === "gradient" ? "" : "hidden"}">
-              <label class="${labelClass}">渐变结束色</label>
-              <input type="color" id="gradientColor" class="${inputClass} h-10 p-1" data-autogen="input" value="${this.config.gradientColor}">
+            <div id="solid-color-wrap" class="${groupClass} ${
+      this.config.fillType === "solid" ? "" : "hidden"
+    }">
+              <label class="${labelClass}">填充颜色</label>
+              <input type="color" id="color" class="${inputClass} h-10 p-1" data-autogen="input" value="${
+      this.config.color
+    }">
+            </div>
+          </div>
+
+          <div id="gradient-controls" class="space-y-4 ${
+            this.config.fillType === "gradient" ? "" : "hidden"
+          } mb-5 rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--muted)/0.3)] p-4">
+            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div class="${groupClass} mb-0">
+                <label class="${labelClass}">渐变类型</label>
+                <select id="gradientType" class="${selectClass}" data-autogen="change">
+                  <option value="linear" ${
+                    this.config.gradientType === "linear" ? "selected" : ""
+                  }>线性渐变</option>
+                  <option value="radial" ${
+                    this.config.gradientType === "radial" ? "selected" : ""
+                  }>径向渐变</option>
+                  <option value="conic" ${
+                    this.config.gradientType === "conic" ? "selected" : ""
+                  }>角向(圆心)渐变</option>
+                </select>
+              </div>
+              <div id="gradient-angle-wrap" class="${groupClass} mb-0 ${
+      this.config.gradientType !== "radial" ? "" : "hidden"
+    }">
+                <div class="flex items-center justify-between">
+                  <label id="gradient-angle-label" class="${labelClass}">${
+      this.config.gradientType === "conic" ? "渐变起始角度" : "渐变角度"
+    }</label>
+                  <div id="angle-value-container" class="mb-2"></div>
+                </div>
+                <input type="range" id="gradientAngle" min="0" max="360" class="w-full" data-autogen="input" value="${
+                  this.config.gradientAngle
+                }">
+              </div>
+            </div>
+
+            <div class="${groupClass} mb-0">
+              <label class="${labelClass}">渐变预览与色标</label>
+              <div class="relative mb-4 px-[1px]">
+                <div id="gradient-bar" class="relative h-8 w-full cursor-crosshair rounded-md border border-[hsl(var(--border))]" style="background: ${this.getGradientCSS()}">
+                  <div id="stops-container" class="absolute inset-0"></div>
+                </div>
+              </div>
+              <div class="flex flex-wrap items-center gap-3">
+                <div id="stops-list" class="flex flex-wrap items-center gap-2">
+                  <!-- List of stops will be rendered here -->
+                </div>
+                <button id="add-stop" class="${secondaryBtnClass} h-9 py-0 text-xs text-nowrap">+ 添加色标</button>
+              </div>
             </div>
           </div>
 
           <div class="${groupClass}">
             <label class="${labelClass}">背景轨道颜色</label>
-            <input type="text" id="bgColor" class="${inputClass}" data-autogen="input" value="${this.config.bgColor}" placeholder="如: rgba(255,255,255,0.1)">
+            <input type="text" id="bgColor" class="${inputClass}" data-autogen="input" value="${
+      this.config.bgColor
+    }" placeholder="如: rgba(255,255,255,0.1)">
           </div>
 
           <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
             <div class="${groupClass}">
               <label class="${labelClass}">文件名前缀</label>
-              <input type="text" id="prefix" class="${inputClass}" data-autogen="input" value="${this.config.prefix}">
+              <input type="text" id="prefix" class="${inputClass}" data-autogen="input" value="${
+      this.config.prefix
+    }">
             </div>
             <div class="${groupClass}">
               <label class="${labelClass}">文件名后缀</label>
-              <input type="text" id="suffix" class="${inputClass}" data-autogen="input" value="${this.config.suffix}">
+              <input type="text" id="suffix" class="${inputClass}" data-autogen="input" value="${
+      this.config.suffix
+    }" placeholder="例如：_red">
             </div>
           </div>
 
@@ -233,6 +356,7 @@ export class ProgressTexturePlugin {
     container.addEventListener("input", (e) => {
       if (e.target.dataset.autogen === "input") {
         this.updateConfig(e.target);
+        this.updateUI(container);
         this.debouncedGenerate();
       }
     });
@@ -248,7 +372,130 @@ export class ProgressTexturePlugin {
     container.querySelector("#download-zip").onclick = () => this.download();
     container.querySelector("#refresh-preview").onclick = () => this.generate();
 
+    container.querySelector("#add-stop").onclick = () => {
+      this.config.gradientStops.push({ offset: 1, color: "#ffffff" });
+      this.config.gradientStops.sort((a, b) => a.offset - b.offset);
+      this.renderStops(container);
+      this.updateGradientPreview(container);
+      this.debouncedGenerate();
+    };
+
+    container.querySelector("#gradient-bar").onclick = (e) => {
+      if (e.target.id !== "gradient-bar" && e.target.id !== "stops-container") return;
+      const rect = container.querySelector("#gradient-bar").getBoundingClientRect();
+      const offset = (e.clientX - rect.left) / rect.width;
+      this.config.gradientStops.push({ 
+        offset: parseFloat(Math.max(0, Math.min(1, offset)).toFixed(2)), 
+        color: "#ffffff" 
+      });
+      this.config.gradientStops.sort((a, b) => a.offset - b.offset);
+      this.renderStops(container);
+      this.updateGradientPreview(container);
+      this.debouncedGenerate();
+    };
+
+    this.renderStops(container);
     this.generate();
+  }
+
+  getGradientCSS() {
+    const stops = this.config.gradientStops
+      .map((s) => `${s.color} ${s.offset * 100}%`)
+      .join(", ");
+    // UI preview always uses a horizontal linear gradient for better stop visualization
+    return `linear-gradient(90deg, ${stops})`;
+  }
+
+  updateGradientPreview(container) {
+    const bar = container.querySelector("#gradient-bar");
+    if (bar) bar.style.background = this.getGradientCSS();
+  }
+
+  renderStops(container) {
+    const stopsList = container.querySelector("#stops-list");
+    const stopsContainer = container.querySelector("#stops-container");
+    if (!stopsList || !stopsContainer) return;
+
+    stopsList.innerHTML = "";
+    stopsContainer.innerHTML = "";
+
+    this.config.gradientStops.forEach((stop, index) => {
+      // List item
+      const item = document.createElement("div");
+      const canRemove = this.config.gradientStops.length > 2;
+      item.className = "group relative flex items-center gap-1.5 rounded-md border border-[hsl(var(--border))] bg-[hsl(var(--background))] p-1 shadow-sm transition-all";
+      // Fixed width to prevent jumping when remove button shows
+      item.style.minWidth = canRemove ? "108px" : "85px";
+
+      item.innerHTML = `
+        <input type="color" value="${stop.color}" class="h-6 w-8 cursor-pointer rounded border-none bg-transparent p-0" data-stop-index="${index}" data-type="color">
+        <input type="number" value="${stop.offset}" step="0.01" min="0" max="1" class="w-12 border-none bg-transparent px-1 py-0 text-xs focus:ring-0 text-center" data-stop-index="${index}" data-type="offset">
+        ${canRemove ? `<button class="flex h-5 w-5 items-center justify-center rounded-md text-[10px] text-red-500 opacity-0 transition-opacity hover:bg-red-50 group-hover:opacity-100" data-stop-index="${index}" data-type="remove" title="移除">✕</button>` : ""}
+      `;
+
+      item.querySelector("[data-type='color']").oninput = (e) => {
+        stop.color = e.target.value;
+        this.updateGradientPreview(container);
+        this.debouncedGenerate();
+      };
+
+      item.querySelector("[data-type='offset']").oninput = (e) => {
+        stop.offset = parseFloat(e.target.value);
+        this.updateGradientPreview(container);
+        this.debouncedGenerate();
+      };
+      
+      item.querySelector("[data-type='offset']").onblur = () => {
+        this.config.gradientStops.sort((a, b) => a.offset - b.offset);
+        this.renderStops(container);
+      };
+
+      if (canRemove) {
+        item.querySelector("[data-type='remove']").onclick = () => {
+          this.config.gradientStops.splice(index, 1);
+          this.renderStops(container);
+          this.updateGradientPreview(container);
+          this.debouncedGenerate();
+        };
+      }
+
+      stopsList.appendChild(item);
+
+      // Visual marker on bar
+      const marker = document.createElement("div");
+      marker.className = "absolute top-0 h-full w-3 -translate-x-1/2 border-2 border-white shadow-md cursor-grab active:cursor-grabbing hover:scale-110 transition-transform active:scale-125 z-10";
+      marker.style.left = `${stop.offset * 100}%`;
+      marker.style.backgroundColor = stop.color;
+      marker.style.borderRadius = "2px";
+      
+      // Dragging logic
+      marker.onmousedown = (e) => {
+        e.preventDefault();
+        const bar = container.querySelector("#gradient-bar");
+        const rect = bar.getBoundingClientRect();
+        
+        const onMouseMove = (moveEvent) => {
+          let offset = (moveEvent.clientX - rect.left) / rect.width;
+          offset = Math.max(0, Math.min(1, offset));
+          stop.offset = parseFloat(offset.toFixed(2));
+          this.renderStops(container);
+          this.updateGradientPreview(container);
+          this.debouncedGenerate();
+        };
+        
+        const onMouseUp = () => {
+          this.config.gradientStops.sort((a, b) => a.offset - b.offset);
+          this.renderStops(container);
+          document.removeEventListener("mousemove", onMouseMove);
+          document.removeEventListener("mouseup", onMouseUp);
+        };
+        
+        document.addEventListener("mousemove", onMouseMove);
+        document.addEventListener("mouseup", onMouseUp);
+      };
+
+      stopsContainer.appendChild(marker);
+    });
   }
 
   updateUI(container) {
@@ -258,12 +505,85 @@ export class ProgressTexturePlugin {
     container.querySelector("#line-params").classList.toggle("hidden", style !== "line");
 
     const fillType = container.querySelector("#fillType").value;
-    container.querySelector("#gradient-color-wrap").classList.toggle("hidden", fillType !== "gradient");
+    container.querySelector("#solid-color-wrap").classList.toggle("hidden", fillType !== "solid");
+    container.querySelector("#gradient-controls").classList.toggle("hidden", fillType !== "gradient");
+
+    const gradientType = container.querySelector("#gradientType")?.value;
+    const angleWrap = container.querySelector("#gradient-angle-wrap");
+    if (angleWrap) angleWrap.classList.toggle("hidden", gradientType === "radial");
+    
+    const angleLabel = container.querySelector("#gradient-angle-label");
+    if (angleLabel) {
+      angleLabel.textContent = gradientType === "conic" ? "渐变起始角度" : "渐变角度";
+    }
+
+    this.renderAngleValue(container);
+    this.updateGradientPreview(container);
+  }
+
+  renderAngleValue(container) {
+    const valueContainer = container.querySelector("#angle-value-container");
+    if (!valueContainer) return;
+
+    const renderButton = () => {
+      valueContainer.innerHTML = "";
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "rounded-md border border-transparent px-1.5 py-0.5 font-mono text-xs text-[hsl(var(--muted-foreground))] transition hover:border-[hsl(var(--border))] hover:bg-[hsl(var(--background))] hover:text-[hsl(var(--foreground))]";
+      btn.textContent = `${this.config.gradientAngle}°`;
+      btn.title = "点击编辑";
+      
+      btn.onclick = () => {
+        valueContainer.innerHTML = "";
+        const input = document.createElement("input");
+        input.type = "number";
+        input.className = "w-16 rounded-md border border-[hsl(var(--input))] bg-[hsl(var(--background))] px-2 py-0.5 font-mono text-xs text-[hsl(var(--foreground))] shadow-sm outline-none focus:border-[hsl(var(--ring))] focus:ring-4 focus:ring-[hsl(var(--ring)/0.18)]";
+        input.value = this.config.gradientAngle;
+        input.min = "0";
+        input.max = "360";
+        
+        const commit = () => {
+          let val = parseFloat(input.value);
+          if (isNaN(val)) val = this.config.gradientAngle;
+          val = Math.max(0, Math.min(360, val));
+          this.config.gradientAngle = val;
+          const slider = container.querySelector("#gradientAngle");
+          if (slider) slider.value = val;
+          renderButton();
+          this.debouncedGenerate();
+          this.updateGradientPreview(container);
+        };
+
+        input.onkeydown = (e) => {
+          if (e.key === "Enter") commit();
+          if (e.key === "Escape") renderButton();
+        };
+        
+        input.onblur = commit;
+        
+        valueContainer.appendChild(input);
+        input.focus();
+        input.select();
+      };
+      
+      valueContainer.appendChild(btn);
+    };
+
+    // If we're already editing (input is child of container), don't overwrite
+    if (!valueContainer.querySelector("input")) {
+      renderButton();
+    } else {
+      // Just update the input value if the slider moved
+      const input = valueContainer.querySelector("input");
+      if (document.activeElement !== input) {
+        input.value = this.config.gradientAngle;
+      }
+    }
   }
 
   updateConfig(target) {
     const id = target.id.split("-")[0];
-    const value = target.type === "number" ? parseFloat(target.value) : target.value;
+    const value = target.type === "number" || target.type === "range" ? parseFloat(target.value) : target.value;
     this.config[id] = value;
     
     // Synchronize specific style fields if needed
@@ -272,6 +592,49 @@ export class ProgressTexturePlugin {
     if (target.id.includes("centerX")) this.config.centerX = parseFloat(target.value);
     if (target.id.includes("centerY")) this.config.centerY = parseFloat(target.value);
     if (target.id.includes("radius")) this.config.radius = parseFloat(target.value);
+  }
+
+  createCanvasGradient(ctx, width, height) {
+    const { gradientType, gradientAngle, gradientStops, centerX, centerY, radius } = this.config;
+    let grad;
+
+    if (gradientType === "linear") {
+      const angleRad = (gradientAngle - 90) * (Math.PI / 180);
+      const cx = width / 2;
+      const cy = height / 2;
+      const r = Math.max(width, height) / 2;
+      
+      const x1 = cx - Math.cos(angleRad) * r;
+      const y1 = cy - Math.sin(angleRad) * r;
+      const x2 = cx + Math.cos(angleRad) * r;
+      const y2 = cy + Math.sin(angleRad) * r;
+      
+      grad = ctx.createLinearGradient(x1, y1, x2, y2);
+    } else if (gradientType === "radial") {
+      // Use config centerX/Y for radial to match circle/arc position
+      const cx = typeof centerX === "number" ? centerX : width / 2;
+      const cy = typeof centerY === "number" ? centerY : height / 2;
+      // For radial, usually we want it to cover the active area
+      const r = Math.max(width, height, radius * 2 || 0);
+      grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, r);
+    } else if (gradientType === "conic") {
+      const cx = typeof centerX === "number" ? centerX : width / 2;
+      const cy = typeof centerY === "number" ? centerY : height / 2;
+      // createConicGradient(startAngleInRadians, x, y)
+      const startAngleRad = (gradientAngle * Math.PI) / 180;
+      if (ctx.createConicGradient) {
+        grad = ctx.createConicGradient(startAngleRad, cx, cy);
+      } else {
+        // Fallback for older browsers if needed, but modern ones should have it
+        grad = ctx.createLinearGradient(0, 0, width, height); 
+      }
+    }
+
+    gradientStops.forEach((stop) => {
+      grad.addColorStop(Math.max(0, Math.min(1, stop.offset)), stop.color);
+    });
+
+    return grad;
   }
 
   async generate() {
@@ -325,10 +688,7 @@ export class ProgressTexturePlugin {
       // Foreground progress
       ctx.beginPath();
       if (fillType === "gradient") {
-        const grad = ctx.createLinearGradient(0, 0, ctx.canvas.width, ctx.canvas.height);
-        grad.addColorStop(0, color);
-        grad.addColorStop(1, gradientColor);
-        ctx.strokeStyle = grad;
+        ctx.strokeStyle = this.createCanvasGradient(ctx, ctx.canvas.width, ctx.canvas.height);
       } else {
         ctx.strokeStyle = color;
       }
@@ -349,10 +709,7 @@ export class ProgressTexturePlugin {
       // Solid circle scaling or filling
       ctx.beginPath();
       if (fillType === "gradient") {
-        const grad = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, radius);
-        grad.addColorStop(0, color);
-        grad.addColorStop(1, gradientColor);
-        ctx.fillStyle = grad;
+        ctx.fillStyle = this.createCanvasGradient(ctx, ctx.canvas.width, ctx.canvas.height);
       } else {
         ctx.fillStyle = color;
       }
@@ -375,10 +732,7 @@ export class ProgressTexturePlugin {
         // Progress
         ctx.beginPath();
         if (fillType === "gradient") {
-            const grad = ctx.createLinearGradient(startX, startY, endX, endY);
-            grad.addColorStop(0, color);
-            grad.addColorStop(1, gradientColor);
-            ctx.strokeStyle = grad;
+            ctx.strokeStyle = this.createCanvasGradient(ctx, ctx.canvas.width, ctx.canvas.height);
         } else {
             ctx.strokeStyle = color;
         }
