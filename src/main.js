@@ -1,8 +1,11 @@
 import { CharacterSpritePlugin } from "./plugins/character-sprite/index.js";
 import { ProgressTexturePlugin } from "./plugins/progress-texture/index.js";
+import { createI18n } from "./utils/i18n.js";
+import { translations } from "./locales.js";
 
 class ToolkitApp {
   constructor() {
+    this.t = createI18n(translations).t;
     this.version = __APP_VERSION__;
     this.plugins = [new CharacterSpritePlugin(), new ProgressTexturePlugin()];
     this.activePlugin = null;
@@ -20,9 +23,23 @@ class ToolkitApp {
   }
 
   init() {
+    // Update static translations
+    document.title = this.t("app_title");
+    const appTitle = document.getElementById("app-title-text");
+    if (appTitle) appTitle.textContent = this.t("app_title");
+
+    const systemStatus = document.getElementById("system-status-title");
+    if (systemStatus) systemStatus.textContent = this.t("system_status");
+
+    const welcomeMsg = document.getElementById("welcome-msg");
+    if (welcomeMsg) welcomeMsg.textContent = this.t("welcome");
+
+    const selectModuleMsg = document.getElementById("select-module-msg");
+    if (selectModuleMsg) selectModuleMsg.textContent = this.t("select_module");
+
     // Update version strings
     document.querySelectorAll(".app-version").forEach((el) => {
-      el.textContent = `版本 ${this.version}`;
+      el.textContent = `${this.t("version")} ${this.version}`;
     });
 
     const nav = document.getElementById("plugin-nav");

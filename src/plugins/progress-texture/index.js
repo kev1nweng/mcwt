@@ -1,8 +1,12 @@
 import JSZip from "jszip";
+import { createI18n } from "../../utils/i18n.js";
+import { translations } from "./locales.js";
 
 export class ProgressTexturePlugin {
   constructor() {
-    this.name = "进度纹理生成器";
+    const { t } = createI18n(translations);
+    this.t = t;
+    this.name = t("name");
     this.config = {
       style: "arc", // arc, circle, line
       width: 100,
@@ -60,58 +64,60 @@ export class ProgressTexturePlugin {
     const html = `
       <div class="space-y-6">
         <div class="${panelClass}">
-          <h2 class="${h2Class}">进度纹理生成器</h2>
+          <h2 class="${h2Class}">${this.t("name")}</h2>
           
           <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
             <div class="${groupClass}">
-              <label class="${labelClass}">样式</label>
+              <label class="${labelClass}">${this.t("style")}</label>
               <select id="style" class="${selectClass}" data-autogen="change">
                 <option value="arc" ${
                   this.config.style === "arc" ? "selected" : ""
-                }>圆环/圆弧</option>
+                }>${this.t("style_arc")}</option>
                 <option value="circle" ${
                   this.config.style === "circle" ? "selected" : ""
-                }>实心圆</option>
+                }>${this.t("style_circle")}</option>
                 <option value="line" ${
                   this.config.style === "line" ? "selected" : ""
-                }>线条</option>
+                }>${this.t("style_line")}</option>
               </select>
             </div>
             <div class="${groupClass}">
-              <label class="${labelClass}">总步数 (序列长度)</label>
+              <label class="${labelClass}">${this.t("steps")}</label>
               <input type="number" id="steps" class="${inputClass}" data-autogen="input" value="${
       this.config.steps
     }">
             </div>
           </div>
 
+
           <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
             <div class="${groupClass}">
-              <label class="${labelClass}">画布宽度</label>
+              <label class="${labelClass}">${this.t("canvas_width")}</label>
               <input type="number" id="width" class="${inputClass}" data-autogen="input" value="${
       this.config.width
     }">
             </div>
             <div class="${groupClass}">
-              <label class="${labelClass}">画布高度</label>
+              <label class="${labelClass}">${this.t("canvas_height")}</label>
               <input type="number" id="height" class="${inputClass}" data-autogen="input" value="${
       this.config.height
     }">
             </div>
           </div>
 
+
           <div id="arc-params" class="${
             this.config.style === "arc" ? "" : "hidden"
           }">
             <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
               <div class="${groupClass}">
-                <label class="${labelClass}">圆心 X</label>
+                <label class="${labelClass}">${this.t("center_x")}</label>
                 <input type="number" id="centerX" class="${inputClass}" data-autogen="input" value="${
       this.config.centerX
     }">
               </div>
               <div class="${groupClass}">
-                <label class="${labelClass}">圆心 Y</label>
+                <label class="${labelClass}">${this.t("center_y")}</label>
                 <input type="number" id="centerY" class="${inputClass}" data-autogen="input" value="${
       this.config.centerY
     }">
@@ -119,41 +125,41 @@ export class ProgressTexturePlugin {
             </div>
             <div class="grid grid-cols-1 gap-5 sm:grid-cols-3">
               <div class="${groupClass}">
-                <label class="${labelClass}">半径</label>
+                <label class="${labelClass}">${this.t("radius")}</label>
                 <input type="number" id="radius" class="${inputClass}" data-autogen="input" value="${
       this.config.radius
     }">
               </div>
               <div class="${groupClass}">
-                <label class="${labelClass}">粗细</label>
+                <label class="${labelClass}">${this.t("thickness")}</label>
                 <input type="number" id="thickness" class="${inputClass}" data-autogen="input" value="${
       this.config.thickness
     }">
               </div>
               <div class="${groupClass}">
-                <label class="${labelClass}">线头样式</label>
+                <label class="${labelClass}">${this.t("line_cap")}</label>
                 <select id="lineCap" class="${selectClass}" data-autogen="change">
                   <option value="round" ${
                     this.config.lineCap === "round" ? "selected" : ""
-                  }>圆头</option>
+                  }>${this.t("cap_round")}</option>
                   <option value="butt" ${
                     this.config.lineCap === "butt" ? "selected" : ""
-                  }>平头</option>
+                  }>${this.t("cap_butt")}</option>
                   <option value="square" ${
                     this.config.lineCap === "square" ? "selected" : ""
-                  }>方头</option>
+                  }>${this.t("cap_square")}</option>
                 </select>
               </div>
             </div>
             <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
               <div class="${groupClass}">
-                <label class="${labelClass}">起始角度 (度)</label>
+                <label class="${labelClass}">${this.t("start_angle")}</label>
                 <input type="number" id="startAngle" class="${inputClass}" data-autogen="input" value="${
       this.config.startAngle
     }">
               </div>
               <div class="${groupClass}">
-                <label class="${labelClass}">结束角度 (度)</label>
+                <label class="${labelClass}">${this.t("end_angle")}</label>
                 <input type="number" id="endAngle" class="${inputClass}" data-autogen="input" value="${
       this.config.endAngle
     }">
@@ -161,43 +167,45 @@ export class ProgressTexturePlugin {
             </div>
           </div>
 
+
           <div id="circle-params" class="${
             this.config.style === "circle" ? "" : "hidden"
           }">
              <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
               <div class="${groupClass}">
-                <label class="${labelClass}">中心 X</label>
+                <label class="${labelClass}">${this.t("center_x_circle")}</label>
                 <input type="number" id="centerX-circle" class="${inputClass}" data-autogen="input" value="${
       this.config.centerX
     }">
               </div>
               <div class="${groupClass}">
-                <label class="${labelClass}">中心 Y</label>
+                <label class="${labelClass}">${this.t("center_y_circle")}</label>
                 <input type="number" id="centerY-circle" class="${inputClass}" data-autogen="input" value="${
       this.config.centerY
     }">
               </div>
             </div>
              <div class="${groupClass}">
-                <label class="${labelClass}">最大半径</label>
+                <label class="${labelClass}">${this.t("max_radius")}</label>
                 <input type="number" id="radius-circle" class="${inputClass}" data-autogen="input" value="${
       this.config.radius
     }">
               </div>
           </div>
 
+
           <div id="line-params" class="${
             this.config.style === "line" ? "" : "hidden"
           }">
             <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
                <div class="${groupClass}">
-                <label class="${labelClass}">起点 X</label>
+                <label class="${labelClass}">${this.t("start_x")}</label>
                 <input type="number" id="startX-line" class="${inputClass}" data-autogen="input" value="${
       this.config.startX
     }">
               </div>
               <div class="${groupClass}">
-                <label class="${labelClass}">起点 Y</label>
+                <label class="${labelClass}">${this.t("start_y")}</label>
                 <input type="number" id="startY-line" class="${inputClass}" data-autogen="input" value="${
       this.config.startY
     }">
@@ -205,13 +213,13 @@ export class ProgressTexturePlugin {
             </div>
             <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
                <div class="${groupClass}">
-                <label class="${labelClass}">终点 X</label>
+                <label class="${labelClass}">${this.t("end_x")}</label>
                 <input type="number" id="endX-line" class="${inputClass}" data-autogen="input" value="${
       this.config.endX
     }">
               </div>
               <div class="${groupClass}">
-                <label class="${labelClass}">终点 Y</label>
+                <label class="${labelClass}">${this.t("end_y")}</label>
                 <input type="number" id="endY-line" class="${inputClass}" data-autogen="input" value="${
       this.config.endY
     }">
@@ -219,45 +227,46 @@ export class ProgressTexturePlugin {
             </div>
             <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
               <div class="${groupClass}">
-                <label class="${labelClass}">线宽</label>
+                <label class="${labelClass}">${this.t("line_width")}</label>
                 <input type="number" id="thickness-line" class="${inputClass}" data-autogen="input" value="${
       this.config.thickness
     }">
               </div>
               <div class="${groupClass}">
-                <label class="${labelClass}">线头样式</label>
+                <label class="${labelClass}">${this.t("line_cap")}</label>
                 <select id="lineCap-line" class="${selectClass}" data-autogen="change">
                   <option value="round" ${
                     this.config.lineCap === "round" ? "selected" : ""
-                  }>圆头</option>
+                  }>${this.t("cap_round")}</option>
                   <option value="butt" ${
                     this.config.lineCap === "butt" ? "selected" : ""
-                  }>平头</option>
+                  }>${this.t("cap_butt")}</option>
                   <option value="square" ${
                     this.config.lineCap === "square" ? "selected" : ""
-                  }>方头</option>
+                  }>${this.t("cap_square")}</option>
                 </select>
               </div>
             </div>
           </div>
 
+
           <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
             <div class="${groupClass}">
-              <label class="${labelClass}">颜色模式</label>
+              <label class="${labelClass}">${this.t("color_mode")}</label>
               <select id="fillType" class="${selectClass}" data-autogen="change">
                 <option value="solid" ${
                   this.config.fillType === "solid" ? "selected" : ""
-                }>纯色</option>
+                }>${this.t("fill_solid")}</option>
                 <option value="gradient" ${
                   this.config.fillType === "gradient" ? "selected" : ""
-                }>渐变</option>
+                }>${this.t("fill_gradient")}</option>
               </select>
             </div>
             <div id="solid-color-wrap" class="${groupClass} ${
       this.config.fillType === "solid" ? "" : "hidden"
     }">
-              <label class="${labelClass}">填充颜色</label>
-              <input type="color" id="color" class="${inputClass} h-10 p-1" data-autogen="input" value="${
+              <label class="${labelClass}">${this.t("fill_color")}</label>
+              <input type="color" id="color" class="h-10 w-full cursor-pointer rounded-md border border-[hsl(var(--input))] bg-[hsl(var(--background))] p-1" data-autogen="input" value="${
       this.config.color
     }">
             </div>
@@ -268,17 +277,17 @@ export class ProgressTexturePlugin {
           } mb-5 rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--muted)/0.3)] p-4">
             <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div class="${groupClass} mb-0">
-                <label class="${labelClass}">渐变类型</label>
+                <label class="${labelClass}">${this.t("gradient_type")}</label>
                 <select id="gradientType" class="${selectClass}" data-autogen="change">
                   <option value="linear" ${
                     this.config.gradientType === "linear" ? "selected" : ""
-                  }>线性渐变</option>
+                  }>${this.t("gradient_linear")}</option>
                   <option value="radial" ${
                     this.config.gradientType === "radial" ? "selected" : ""
-                  }>径向渐变</option>
+                  }>${this.t("gradient_radial")}</option>
                   <option value="conic" ${
                     this.config.gradientType === "conic" ? "selected" : ""
-                  }>角向(圆心)渐变</option>
+                  }>${this.t("gradient_conic")}</option>
                 </select>
               </div>
               <div id="gradient-angle-wrap" class="${groupClass} mb-0 ${
@@ -286,7 +295,7 @@ export class ProgressTexturePlugin {
     }">
                 <div class="flex items-center justify-between">
                   <label id="gradient-angle-label" class="${labelClass}">${
-      this.config.gradientType === "conic" ? "渐变起始角度" : "渐变角度"
+      this.config.gradientType === "conic" ? this.t("gradient_start_angle") : this.t("gradient_angle")
     }</label>
                   <div id="angle-value-container" class="mb-2"></div>
                 </div>
@@ -297,7 +306,8 @@ export class ProgressTexturePlugin {
             </div>
 
             <div class="${groupClass} mb-0">
-              <label class="${labelClass}">渐变预览与色标</label>
+              <label class="${labelClass}">${this.t("gradient_stops_preview")}</label>
+
               <div class="relative mb-4 px-[1px]">
                 <div id="gradient-bar" class="relative h-8 w-full cursor-crosshair rounded-md border border-[hsl(var(--border))]" style="background: ${this.getGradientCSS()}">
                   <div id="stops-container" class="absolute inset-0"></div>
@@ -307,46 +317,47 @@ export class ProgressTexturePlugin {
                 <div id="stops-list" class="flex flex-wrap items-center gap-2">
                   <!-- List of stops will be rendered here -->
                 </div>
-                <button id="add-stop" class="${secondaryBtnClass} h-9 py-0 text-xs text-nowrap">+ 添加色标</button>
+                <button id="add-stop" class="${secondaryBtnClass} h-9 py-0 text-xs text-nowrap">${this.t("add_stop")}</button>
               </div>
             </div>
           </div>
 
           <div class="${groupClass}">
-            <label class="${labelClass}">背景轨道颜色</label>
+            <label class="${labelClass}">${this.t("bg_color_label")}</label>
             <input type="text" id="bgColor" class="${inputClass}" data-autogen="input" value="${
       this.config.bgColor
-    }" placeholder="如: rgba(255,255,255,0.1)">
+    }" placeholder="${this.t("bg_color_placeholder")}">
           </div>
 
           <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
             <div class="${groupClass}">
-              <label class="${labelClass}">文件名前缀</label>
+              <label class="${labelClass}">${this.t("prefix")}</label>
               <input type="text" id="prefix" class="${inputClass}" data-autogen="input" value="${
       this.config.prefix
     }">
             </div>
             <div class="${groupClass}">
-              <label class="${labelClass}">文件名后缀</label>
+              <label class="${labelClass}">${this.t("suffix")}</label>
               <input type="text" id="suffix" class="${inputClass}" data-autogen="input" value="${
       this.config.suffix
-    }" placeholder="例如：_red">
+    }" placeholder="${this.t("suffix_placeholder")}">
             </div>
           </div>
 
           <div class="flex flex-wrap gap-3">
-            <button id="download-zip" class="${primaryBtnClass}">下载纹理集 (ZIP)</button>
-            <button id="refresh-preview" class="${secondaryBtnClass}">刷新预览</button>
+            <button id="download-zip" class="${primaryBtnClass}">${this.t("download_zip_btn")}</button>
+            <button id="refresh-preview" class="${secondaryBtnClass}">${this.t("refresh_preview_btn")}</button>
           </div>
         </div>
 
         <div class="${panelClass}">
-          <h2 class="${h2Class}">预览区域</h2>
+          <h2 class="${h2Class}">${this.t("preview_area")}</h2>
           <div id="preview-container" class="preview-grid flex flex-wrap gap-4 min-h-[100px] items-center justify-center rounded-lg border-2 border-dashed border-[hsl(var(--muted))] p-4">
           </div>
         </div>
       </div>
     `;
+
 
     container.innerHTML = html;
 
@@ -430,8 +441,9 @@ export class ProgressTexturePlugin {
       item.innerHTML = `
         <input type="color" value="${stop.color}" class="h-6 w-8 cursor-pointer rounded border-none bg-transparent p-0" data-stop-index="${index}" data-type="color">
         <input type="number" value="${stop.offset}" step="0.01" min="0" max="1" class="w-12 border-none bg-transparent px-1 py-0 text-xs focus:ring-0 text-center" data-stop-index="${index}" data-type="offset">
-        ${canRemove ? `<button class="flex h-5 w-5 items-center justify-center rounded-md text-[10px] text-red-500 opacity-0 transition-opacity hover:bg-red-50 group-hover:opacity-100" data-stop-index="${index}" data-type="remove" title="移除">✕</button>` : ""}
+        ${canRemove ? `<button class="flex h-5 w-5 items-center justify-center rounded-md text-[10px] text-red-500 opacity-0 transition-opacity hover:bg-red-50 group-hover:opacity-100" data-stop-index="${index}" data-type="remove" title="${this.t("remove_title")}">✕</button>` : ""}
       `;
+
 
       item.querySelector("[data-type='color']").oninput = (e) => {
         stop.color = e.target.value;

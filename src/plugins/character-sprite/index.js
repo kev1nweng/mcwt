@@ -1,8 +1,12 @@
 import JSZip from "jszip";
+import { createI18n } from "../../utils/i18n.js";
+import { translations } from "./locales.js";
 
 export class CharacterSpritePlugin {
   constructor() {
-    this.name = "字符纹理生成器";
+    const { t } = createI18n(translations);
+    this.t = t;
+    this.name = t("name");
     this.config = {
       fontFamily: "Inter",
       fontSize: 48,
@@ -73,43 +77,43 @@ export class CharacterSpritePlugin {
     const html = `
       <div class="space-y-6">
         <div class="${panelClass}">
-          <h2 class="${h2Class}">字符纹理生成器</h2>
+          <h2 class="${h2Class}">${this.t("name")}</h2>
           <div class="${groupClass}">
-            <label class="${labelClass}">序列 (要生成的字符)</label>
+            <label class="${labelClass}">${this.t("sequence")}</label>
             <input type="text" id="sequence" class="${inputClass}" data-autogen="input" value="${
                       this.config.sequence
-                    }" placeholder="例如：0123456789-:% 或 0,1,2,10,11">
-            <div class="mt-1 text-[10px] text-[hsl(var(--muted-foreground))]">提示：使用逗号分隔可在一张图中渲染多个字符（单图多字模式）。</div>
+                    }" placeholder="${this.t("sequence_placeholder")}">
+            <div class="mt-1 text-[10px] text-[hsl(var(--muted-foreground))]">${this.t("sequence_tip")}</div>
                 </div>
           <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
             <div class="${groupClass}">
-              <label class="${labelClass}">文件名前缀</label>
+              <label class="${labelClass}">${this.t("prefix")}</label>
               <input type="text" id="filename-prefix" class="${inputClass}" data-autogen="input" value="${
                           this.config.prefix
-                        }" placeholder="例如：char">
+                        }" placeholder="${this.t("prefix_placeholder")}">
                     </div>
             <div class="${groupClass}">
-              <label class="${labelClass}">文件名后缀 (可选)</label>
+              <label class="${labelClass}">${this.t("suffix")}</label>
               <input type="text" id="filename-suffix" class="${inputClass}" data-autogen="input" value="${
                           this.config.suffix
-                        }" placeholder="例如：_white">
+                        }" placeholder="${this.t("suffix_placeholder")}">
                     </div>
                 </div>
           <div class="${groupClass}">
-            <label class="${labelClass}">字体系列 (系统字体或 URL)</label>
+            <label class="${labelClass}">${this.t("font_family")}</label>
             <input type="text" id="font-family" class="${inputClass}" data-autogen="input" value="${
                       this.config.fontFamily
-                    }" placeholder="例如：'Orbitron' 或 'https://fonts.googleapis.com/css2?family=Orbitron&display=swap'">
+                    }" placeholder="${this.t("font_family_placeholder")}">
                 </div>
           <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
             <div class="${groupClass}">
-              <label class="${labelClass}">字体大小 (px)</label>
+              <label class="${labelClass}">${this.t("font_size")}</label>
               <input type="number" id="font-size" class="${inputClass}" data-autogen="input" value="${
                           this.config.fontSize
                         }">
                     </div>
             <div class="${groupClass}">
-              <label class="${labelClass}">文本颜色 (十六进制)</label>
+              <label class="${labelClass}">${this.t("text_color")}</label>
                         <input type="color" id="text-color" class="h-10 w-full cursor-pointer rounded-md border border-[hsl(var(--input))] bg-[hsl(var(--background))] p-1" data-autogen="input" value="${
                           this.config.color
               }">
@@ -117,13 +121,13 @@ export class CharacterSpritePlugin {
                 </div>
           <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
             <div class="${groupClass}">
-              <label class="${labelClass}">字符宽度 (px)</label>
+              <label class="${labelClass}">${this.t("width")}</label>
               <input type="number" id="char-width" class="${inputClass}" data-autogen="input" value="${
                           this.config.width
                         }">
                     </div>
             <div class="${groupClass}">
-              <label class="${labelClass}">字符高度 (px)</label>
+              <label class="${labelClass}">${this.t("height")}</label>
               <input type="number" id="char-height" class="${inputClass}" data-autogen="input" value="${
                           this.config.height
                         }">
@@ -131,84 +135,85 @@ export class CharacterSpritePlugin {
                 </div>
           <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
             <div class="${groupClass}">
-              <label class="${labelClass}">水平偏移 (px, 可选)</label>
+              <label class="${labelClass}">${this.t("h_offset")}</label>
               <input type="number" id="h-offset" class="${inputClass}" data-autogen="input" value="0">
             </div>
             <div class="${groupClass}">
-              <label class="${labelClass}">垂直偏移 (px, 可选)</label>
+              <label class="${labelClass}">${this.t("v_offset")}</label>
               <input type="number" id="v-offset" class="${inputClass}" data-autogen="input" value="0">
             </div>
           </div>
           <div class="${groupClass}">
-            <label class="${labelClass}">字体样式</label>
+            <label class="${labelClass}">${this.t("font_style")}</label>
             <div class="${checkboxWrapClass}">
               <label class="${checkboxItemClass}">
                 <input class="accent-[hsl(var(--foreground))]" type="checkbox" id="style-bold" data-autogen="change" ${
                               this.config.bold ? "checked" : ""
-                            }> <b>B</b> 加粗
+                            }> <b>B</b> ${this.t("bold")}
                         </label>
               <label class="${checkboxItemClass}">
                 <input class="accent-[hsl(var(--foreground))]" type="checkbox" id="style-italic" data-autogen="change" ${
                               this.config.italic ? "checked" : ""
-                            }> <i>I</i> 斜体
+                            }> <i>I</i> ${this.t("italic")}
                         </label>
               <label class="${checkboxItemClass}">
                 <input class="accent-[hsl(var(--foreground))]" type="checkbox" id="style-underline" data-autogen="change" ${
                               this.config.underline ? "checked" : ""
-                            }> <u>U</u> 下划线
+                            }> <u>U</u> ${this.t("underline")}
                         </label>
               <label class="${checkboxItemClass}">
                 <input class="accent-[hsl(var(--foreground))]" type="checkbox" id="style-outline" data-autogen="change" ${
                               this.config.outlineOnly ? "checked" : ""
-                            }> <b>O</b> 仅轮廓
+                            }> <b>O</b> ${this.t("outline_only")}
                         </label>
                     </div>
                 </div>
           <div class="${groupClass}">
-            <label class="${labelClass}">字体特性</label>
+            <label class="${labelClass}">${this.t("font_features")}</label>
             <div class="${checkboxWrapClass}">
               <label class="${checkboxItemClass}">
-                <input class="accent-[hsl(var(--foreground))]" type="checkbox" id="feat-tnum" data-autogen="change" ${this.config.features.tnum ? 'checked' : ''}> 等宽数字 (tnum)
+                <input class="accent-[hsl(var(--foreground))]" type="checkbox" id="feat-tnum" data-autogen="change" ${this.config.features.tnum ? 'checked' : ''}> ${this.t("tnum")}
                         </label>
               <label class="${checkboxItemClass}">
-                <input class="accent-[hsl(var(--foreground))]" type="checkbox" id="feat-lnum" data-autogen="change" ${this.config.features.lnum ? 'checked' : ''}> 等高数字 (lnum)
+                <input class="accent-[hsl(var(--foreground))]" type="checkbox" id="feat-lnum" data-autogen="change" ${this.config.features.lnum ? 'checked' : ''}> ${this.t("lnum")}
                         </label>
               <label class="${checkboxItemClass}">
-                <input class="accent-[hsl(var(--foreground))]" type="checkbox" id="feat-onum" data-autogen="change" ${this.config.features.onum ? 'checked' : ''}> 旧式数字 (onum)
+                <input class="accent-[hsl(var(--foreground))]" type="checkbox" id="feat-onum" data-autogen="change" ${this.config.features.onum ? 'checked' : ''}> ${this.t("onum")}
                         </label>
               <label class="${checkboxItemClass}">
-                <input class="accent-[hsl(var(--foreground))]" type="checkbox" id="feat-kern" data-autogen="change" ${this.config.features.kern ? 'checked' : ''}> 字距调整 (kern)
+                <input class="accent-[hsl(var(--foreground))]" type="checkbox" id="feat-kern" data-autogen="change" ${this.config.features.kern ? 'checked' : ''}> ${this.t("kern")}
                         </label>
                     </div>
                 </div>
           <div class="${groupClass}">
             <label class="${checkboxItemClass} mb-2">
               <input class="accent-[hsl(var(--foreground))]" type="checkbox" id="enable-variable-font" ${this.config.enableVariableFont ? 'checked' : ''}> 
-              <span class="font-medium">启用可变字体控制</span>
+              <span class="font-medium">${this.t("enable_variable_font")}</span>
                     </label>
             <div class="ml-5 mt-1 text-[11px] text-[hsl(var(--muted-foreground))]">
-                        如果字体支持可变轴（如 wght, wdth, opsz 等），勾选此项以显示控制选项
+                        ${this.t("variable_font_tip")}
                     </div>
                 </div>
           <div id="variable-font-controls" class="${groupClass} hidden">
-            <label class="${labelClass}">可变字体轴控制</label>
+            <label class="${labelClass}">${this.t("variable_font_axes")}</label>
             <div id="variation-axes-container" class="mt-3 flex flex-col gap-4 rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--muted))] p-4">
                         <!-- Variable font axes will be dynamically added here -->
                     </div>
                 </div>
           <div class="mt-3 flex flex-wrap gap-3">
-            <button id="generate-btn" class="${primaryBtnClass}">生成图片</button>
-            <button id="download-btn" class="${secondaryBtnClass}">下载 ZIP</button>
-                </div>
+            <button id="download-btn" class="${primaryBtnClass}">${this.t("download_zip_btn")}</button>
+            <button id="generate-btn" class="${secondaryBtnClass}">${this.t("refresh_preview_btn")}</button>
+          </div>
             </div>
               <div class="${panelClass}">
-          <h2 class="${h2Class}">预览</h2>
+          <h2 class="${h2Class}">${this.t("preview_area")}</h2>
           <div id="preview-container" class="mt-3 flex flex-wrap gap-2.5 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--muted))] p-4">
                     <!-- Canvases will be injected here -->
                 </div>
             </div>
           </div>
         `;
+
     container.innerHTML = html;
 
     container.querySelector("#generate-btn").onclick = () => this.generate();
@@ -277,14 +282,14 @@ export class CharacterSpritePlugin {
 
     // Common variable font axes with their ranges
     const commonAxes = [
-      { tag: 'wght', name: '字重 (Weight)', min: 100, max: 1000, default: 400 },
-      { tag: 'wdth', name: '宽度 (Width)', min: 25, max: 200, default: 100 },
-      { tag: 'opsz', name: '光学尺寸 (Optical Size)', min: 6, max: 144, default: 14 },
-      { tag: 'slnt', name: '倾斜 (Slant)', min: -15, max: 0, default: 0 },
-      { tag: 'ital', name: '斜体 (Italic)', min: 0, max: 1, default: 0 },
-      { tag: 'GRAD', name: '笔画 (Grade)', min: -200, max: 150, default: 0 },
+      { tag: 'wght', name: this.t('weight'), min: 100, max: 1000, default: 400 },
+      { tag: 'wdth', name: this.t('wdth'), min: 25, max: 200, default: 100 },
+      { tag: 'opsz', name: this.t('opsz'), min: 6, max: 144, default: 14 },
+      { tag: 'slnt', name: this.t('slnt'), min: -15, max: 0, default: 0 },
+      { tag: 'ital', name: this.t('ital'), min: 0, max: 1, default: 0 },
+      { tag: 'GRAD', name: this.t('grad'), min: -200, max: 150, default: 0 },
       // Google Sans Flex supports Roundness axis
-      { tag: 'ROND', name: '圆角 (Roundness)', min: 0, max: 100, default: 0 },
+      { tag: 'ROND', name: this.t('rond'), min: 0, max: 100, default: 0 },
     ];
 
     variableControlsDiv.classList.remove("hidden");
@@ -478,9 +483,10 @@ export class CharacterSpritePlugin {
 
     if (items.length === 0) {
       this.previewContainer.innerHTML =
-        '<p class="text-sm text-[hsl(var(--muted-foreground))]">输入序列以生成图片。</p>';
+        `<p class="text-sm text-[hsl(var(--muted-foreground))]">${this.t("input_sequence_tip")}</p>`;
       return;
     }
+
 
     // 1. Pre-measure all characters to find a common baseline
     const tempCanvas = document.createElement("canvas");
@@ -531,8 +537,9 @@ export class CharacterSpritePlugin {
       wrapper.appendChild(canvas);
       const label = document.createElement("div");
       label.className = "text-[10px] text-[hsl(var(--muted-foreground))]";
-      label.textContent = item === " " ? "空格" : item;
+      label.textContent = item === " " ? this.t("space") : item;
       wrapper.appendChild(label);
+
       this.previewContainer.appendChild(wrapper);
 
       const ctx = canvas.getContext("2d");

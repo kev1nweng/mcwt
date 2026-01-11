@@ -3,23 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>小米手环表盘工具箱</title>
+    <title>Mi Band Watchface Toolkit</title>
     <link rel="stylesheet" href="/style.css">
 </head>
 <body>
     <header class="flex items-center justify-between gap-4 border-b border-[hsl(var(--border))] bg-[hsl(var(--background)/0.85)] px-6 py-4 backdrop-blur">
         <div class="flex items-center">
-            <div class="text-sm font-semibold tracking-tight">小米手环表盘工具箱</div>
+            <div id="app-title-text" class="text-sm font-semibold tracking-tight">Mi Band Watchface Toolkit</div>
         </div>
         <nav id="plugin-nav" class="flex flex-wrap items-center gap-2"></nav>
     </header>
     <main id="app" class="scroll-container mx-auto w-full max-w-[980px] flex-1 overflow-y-auto px-6 py-8">
         <div id="plugin-content">
             <div class="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-6 text-[hsl(var(--card-foreground))] shadow-sm">
-                <h2 class="mb-5 text-base font-semibold tracking-tight">系统状态</h2>
+                <h2 id="system-status-title" class="mb-5 text-base font-semibold tracking-tight">System Status</h2>
                 <div class="flex flex-col gap-2 font-mono text-sm text-[hsl(var(--muted-foreground))]">
-                    <p>欢迎使用小米手环表盘工具箱。</p>
-                    <p>从顶部菜单选择一个模块开始。</p>
+                    <p id="welcome-msg">Welcome to Mi Band Custom Watchface Toolkit.</p>
+                    <p id="select-module-msg">Select a module from the top menu to start.</p>
                 </div>
             </div>
         </div>
